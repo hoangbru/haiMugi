@@ -8,9 +8,9 @@ import { Toaster } from 'react-hot-toast'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <Provider store={store}>
-    * <PersistGate loading={null} persistor={persistor}> */
+    <PersistGate loading={null} persistor={persistor}>
       <Toaster/>
       <App />
-    // </PersistGate>
+    </PersistGate>
   </Provider>
 )

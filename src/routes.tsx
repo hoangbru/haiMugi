@@ -1,4 +1,8 @@
-import { Navigate, createBrowserRouter } from "react-router-dom";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import {
+  Navigate,
+  createBrowserRouter,
+} from "react-router-dom";
 
 import { LayoutSite, LayoutAdmin } from "./layouts";
 import {
@@ -21,6 +25,7 @@ import {
   ProductEdit,
   ProductList,
 } from "./pages/admin";
+import { PrivateRoute } from "./helpers/protectionRoute";
 
 export const router = createBrowserRouter([
   {
@@ -37,26 +42,31 @@ export const router = createBrowserRouter([
   },
   {
     path: "/admin",
-    element: <LayoutAdmin />,
+    element: <PrivateRoute isAuth={true} />,
     children: [
-      { index: true, element: <Navigate to="dashboard" /> },
-      { path: "dashboard", element: <Dashboard /> },
       {
-        path: "products",
+        element: <LayoutAdmin />,
         children: [
-          { index: true, element: <Navigate to="list" /> },
-          { path: "list", element: <ProductList /> },
-          { path: "add", element: <ProductAdd /> },
-          { path: ":id/edit", element: <ProductEdit /> },
-        ],
-      },
-      {
-        path: "categories",
-        children: [
-          { index: true, element: <Navigate to="list" /> },
-          { path: "list", element: <CategoryList /> },
-          { path: "add", element: <CategoryAdd /> },
-          { path: ":id/edit", element: <CategoryEdit /> },
+          { index: true, element: <Navigate to="dashboard" /> },
+          { path: "dashboard", element: <Dashboard /> },
+          {
+            path: "products",
+            children: [
+              { index: true, element: <Navigate to="list" /> },
+              { path: "list", element: <ProductList /> },
+              { path: "add", element: <ProductAdd /> },
+              { path: ":id/edit", element: <ProductEdit /> },
+            ],
+          },
+          {
+            path: "categories",
+            children: [
+              { index: true, element: <Navigate to="list" /> },
+              { path: "list", element: <CategoryList /> },
+              { path: "add", element: <CategoryAdd /> },
+              { path: ":id/edit", element: <CategoryEdit /> },
+            ],
+          },
         ],
       },
     ],
