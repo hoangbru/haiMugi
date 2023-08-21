@@ -160,8 +160,8 @@ const ProductEdit = () => {
               <Row>
                 {sizes?.map((item: ISize) => {
                   return (
-                    <Col span={8} key={item.id}>
-                      <Checkbox value={item.id}>{item.size}</Checkbox>
+                    <Col span={8} key={item._id}>
+                      <Checkbox value={item._id}>{item.size}</Checkbox>
                     </Col>
                   );
                 })}
@@ -173,8 +173,8 @@ const ProductEdit = () => {
               {categories?.map((category: ICategory) => {
                 return (
                   <Select.Option
-                    key={category.id}
-                    value={category.id}
+                    key={category._id}
+                    value={category._id}
                     label={category.name}
                   >
                     {category.name}

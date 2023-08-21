@@ -1,5 +1,5 @@
 export interface ISize {
-    id?: string | number;
+    _id?: string | number;
     size?: number;
     inStock?: boolean
 }

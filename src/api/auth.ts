@@ -5,7 +5,8 @@ interface AuthSignup {
   username: string;
   email: string;
   password: string;
-  confirmPassword: string;
+  confirmPassword?: string;
+  role: string
 }
 
 interface AuthSignin {
@@ -20,14 +21,14 @@ const authApi = createApi({
     baseUrl: import.meta.env.VITE_BASE_URL_API,
   }),
   endpoints: (builder) => ({
-    signin: builder.mutation<{message: string, acessToken: string, user: {} }, AuthSignin>({
+    signin: builder.mutation<{message: string, accessToken: string, user: {} }, AuthSignin>({
       query: (credentials) => ({
         url: "signin",
         method: "POST",
         body: credentials,
       }),
     }),
-    signup: builder.mutation<{message: string, acessToken: string, user: {} }, AuthSignup>({
+    signup: builder.mutation<{message: string, user: {} }, AuthSignup>({
       query: (credentials) => ({
         url: "signup",
         method: "POST",

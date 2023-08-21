@@ -10,9 +10,13 @@ import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 
 const Checkout = () => {
+  const user = JSON.parse(localStorage?.getItem("user") as string);
   const { items: carts } = useAppSelector((state) => state.cart);
   const dispatch = useAppDispatch();
   const [addOrder] = useAddOrderMutation();
+  const total = carts.reduce((sum: any, item: any) => {
+    return sum + item.price * item.quantity;
+  }, 0);
   const {
     handleSubmit,
     register,
@@ -23,7 +27,7 @@ const Checkout = () => {
     if (carts.length === 0) return navigate("/");
   }, [carts, navigate]);
   const onHandleSubmit = (value: any) => {
-    addOrder({ ...value, items: carts })
+    addOrder({ ...value, userId: user?.user?._id, items: carts, total: total })
       .unwrap()
       .then(() => {
         toast.success("Đặt hàng thành công!");
@@ -33,9 +37,7 @@ const Checkout = () => {
         }, 1000);
       });
   };
-  const total = carts.reduce((sum: any, item: any) => {
-    return sum + item.price * item.quantity;
-  }, 0);
+  
   return (
     <div className="bg-white pb-24">
       <div>
@@ -87,7 +89,7 @@ const Checkout = () => {
                           )}
                         </div>
                       </div>
-                      <div className="sm:col-span-4">
+                      {/* <div className="sm:col-span-4">
                         <label
                           htmlFor="email"
                           className="block text-sm font-medium leading-6 text-gray-900"
@@ -116,11 +118,11 @@ const Checkout = () => {
                             </div>
                           )}
                         </div>
-                      </div>
+                      </div> */}
 
                       <div className="sm:col-span-2">
                         <label
-                          htmlFor="email"
+                          htmlFor="phone"
                           className="block text-sm font-medium leading-6 text-gray-900"
                         >
                           Số điện thoại

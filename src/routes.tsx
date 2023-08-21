@@ -1,8 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {
-  Navigate,
-  createBrowserRouter,
-} from "react-router-dom";
+import { Navigate, createBrowserRouter } from "react-router-dom";
 
 import { LayoutSite, LayoutAdmin } from "./layouts";
 import {
@@ -26,6 +23,10 @@ import {
   ProductList,
 } from "./pages/admin";
 import { PrivateRoute } from "./helpers/protectionRoute";
+import ProductTrash from "./pages/admin/products/ProductTrash";
+
+const user = JSON.parse(localStorage?.getItem("user") as string);
+const isAuth = user?.user?.role === "admin" ? true : false;
 
 export const router = createBrowserRouter([
   {
@@ -42,7 +43,7 @@ export const router = createBrowserRouter([
   },
   {
     path: "/admin",
-    element: <PrivateRoute isAuth={true} />,
+    element: <PrivateRoute isAuth={isAuth} />,
     children: [
       {
         element: <LayoutAdmin />,
@@ -56,6 +57,7 @@ export const router = createBrowserRouter([
               { path: "list", element: <ProductList /> },
               { path: "add", element: <ProductAdd /> },
               { path: ":id/edit", element: <ProductEdit /> },
+              { path: "trash", element: <ProductTrash /> },
             ],
           },
           {

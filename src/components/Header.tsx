@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Fragment, useState } from "react";
-import { Dialog, Popover, Transition } from "@headlessui/react";
+import { Dialog, Popover, Transition, Menu } from "@headlessui/react";
 import {
   HiOutlineShoppingBag,
   HiMenuAlt1,
@@ -8,12 +8,17 @@ import {
   HiX,
   HiPlusSm,
   HiMinusSm,
-  // HiOutlineUserCircle,
+  HiOutlineUserCircle,
 } from "react-icons/hi";
 import { Link } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../store/hook";
 import { decrease, increase, remove } from "../slices/Cart";
 import * as CurrencyFormat from "react-currency-format";
+import { toast } from "react-hot-toast";
+
+function classNames(...classes: string[]) {
+  return classes.filter(Boolean).join(" ");
+}
 
 const navigation = {
   pages: [
@@ -25,6 +30,7 @@ const navigation = {
 };
 
 export default function Header() {
+  const user = JSON.parse(localStorage?.getItem("user") as string);
   const [open, setOpen] = useState(false);
   const [openCart, setOpenCart] = useState(false);
   const dispatch = useAppDispatch();
@@ -33,6 +39,11 @@ export default function Header() {
     return sum + item.price * item.quantity;
   }, 0);
   const countCart = carts.length;
+  const btnLogOut = () => {
+    localStorage.removeItem("user")
+    window.location.reload()
+    toast.success("Đăng xuất thành công !")
+  };
 
   return (
     <div className="bg-white">
@@ -85,31 +96,35 @@ export default function Header() {
                       </Link>
                     </div>
                   ))}
-                </div>
 
-                <div className="space-y-6 border-t border-gray-200 px-4 py-6">
-                  {/* <div className="flow-root">
-                    <div className="flex gap-2 items-center hover:opacity-80 cursor-pointer">
-                      <HiOutlineUserCircle size={23} />
-                      Hoang
-                    </div>
-                  </div> */}
-                  <div className="flow-root">
-                    <Link
-                      to="/signin"
-                      className="-m-2 block p-2 font-medium text-gray-900"
-                    >
-                      Đăng nhập
-                    </Link>
-                  </div>
-                  <div className="flow-root">
-                    <Link
-                      to="/signup"
-                      className="-m-2 block p-2 font-medium text-gray-900"
-                    >
-                      Tạo tài khoản
-                    </Link>
-                  </div>
+                    {user ? (
+                      <div className="flow-root">
+                        <div className="flex gap-2 items-center hover:opacity-80 cursor-pointer">
+                          <HiOutlineUserCircle size={23} />
+                          {user?.user?.username}
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="space-y-6 border-t border-gray-200 px-4 py-6">
+                        <div className="flow-root">
+                          <Link
+                            to="/signin"
+                            className="-m-2 block p-2 font-medium text-gray-900"
+                          >
+                            Đăng nhập
+                          </Link>
+                        </div>
+                        <div className="flow-root">
+                          <Link
+                            to="/signup"
+                            className="-m-2 block p-2 font-medium text-gray-900"
+                          >
+                            Tạo tài khoản
+                          </Link>
+                        </div>
+                      </div>
+                    )}
+                    
                 </div>
 
                 <div className="border-t border-gray-200 px-4 py-6">
@@ -172,29 +187,91 @@ export default function Header() {
               </Popover.Group>
 
               <div className="ml-auto flex items-center">
-                {/* <div className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6">
-                  <div className="flex gap-2 items-center cursor-pointer text-sm font-medium text-gray-700 hover:text-gray-800">
-                    <HiOutlineUserCircle size={23} />
-                    Hoang
-                  </div>
-                </div> */}
-
+              <Menu as="div" className="relative ml-3">
                 {/* Signin */}
-                <div className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6">
-                  <Link
-                    to="/signin"
-                    className="text-sm font-medium text-gray-700 hover:text-gray-800"
+                {user ? (
+                  <div className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6">
+                    <div className="flex gap-2 items-center cursor-pointer text-sm font-medium text-gray-700 hover:text-gray-800">
+                      <p className="text-sm">{user.user.username}</p>
+                      <Menu.Button className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                        <span className="absolute -inset-1.5" />
+                        <img
+                          className="h-6 w-6 rounded-full"
+                          src={user.user.avatar}
+                          alt=""
+                        />
+                      </Menu.Button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6">
+                    <Link
+                      to="/signin"
+                      className="text-sm font-medium text-gray-700 hover:text-gray-800"
+                    >
+                      Đăng nhập
+                    </Link>
+                    <span className="h-6 w-px bg-gray-200" aria-hidden="true" />
+                    <Link
+                      to="/signup"
+                      className="text-sm font-medium text-gray-700 hover:text-gray-800"
+                    >
+                      Tạo tài khoản
+                    </Link>
+                  </div>
+                )}
+                <Transition
+                    as={Fragment}
+                    enter="transition ease-out duration-100"
+                    enterFrom="transform opacity-0 scale-95"
+                    enterTo="transform opacity-100 scale-100"
+                    leave="transition ease-in duration-75"
+                    leaveFrom="transform opacity-100 scale-100"
+                    leaveTo="transform opacity-0 scale-95"
                   >
-                    Đăng nhập
-                  </Link>
-                  <span className="h-6 w-px bg-gray-200" aria-hidden="true" />
-                  <Link
-                    to="/signup"
-                    className="text-sm font-medium text-gray-700 hover:text-gray-800"
-                  >
-                    Tạo tài khoản
-                  </Link>
-                </div>
+                    <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                      <Menu.Item>
+                        {({ active }: any) => (
+                          <Link
+                            to="#"
+                            className={classNames(
+                              active ? "bg-gray-100" : "",
+                              "block px-4 py-2 text-sm text-gray-700"
+                            )}
+                          >
+                            Thông tin tài khoản
+                          </Link>
+                        )}
+                      </Menu.Item>
+                      <Menu.Item>
+                        {({ active }: any) => (
+                          <Link
+                            to="#"
+                            className={classNames(
+                              active ? "bg-gray-100" : "",
+                              "block px-4 py-2 text-sm text-gray-700"
+                            )}
+                          >
+                             Theo dõi đơn hàng
+                          </Link>
+                        )}
+                      </Menu.Item>
+                      <Menu.Item>
+                        {({ active }: any) => (
+                          <Menu.Button
+                            onClick={() => btnLogOut()}
+                            className={classNames(
+                              active ? "bg-gray-100 w-full" : "",
+                              "block px-4 py-2 text-sm text-gray-700"
+                            )}
+                          >
+                            Đăng xuất
+                          </Menu.Button>
+                        )}
+                      </Menu.Item>
+                    </Menu.Items>
+                  </Transition>
+                </Menu>
 
                 {/* Languages */}
                 <div className="hidden lg:ml-8 lg:flex">

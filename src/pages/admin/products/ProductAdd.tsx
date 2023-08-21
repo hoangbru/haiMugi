@@ -26,14 +26,14 @@ const ProductAdd = () => {
 
   const SubmitImage = async () => {
     const data = new FormData();
-    const cloud_name = "ddbdu6zip";
-    const upload_preset = "vithoang";
+    const cloud_name = import.meta.env.VITE_CLOUD_NAME;
+    const upload_preset = import.meta.env.VITE_UPLOAD_PRESET;
     data.append("file", image);
     data.append("upload_preset", upload_preset);
     data.append("cloud_name", cloud_name);
-    data.append("folder", "portfolio");
+    data.append("folder", import.meta.env.VITE_CLOUD_FOLDER);
     const takeData = await axios
-      .post(`https://api.cloudinary.com/v1_1/ddbdu6zip/image/upload`, data)
+      .post(`${import.meta.env.VITE_CLOUDINARY_API}`, data)
       .then((data: any) => data);
     return takeData.data.secure_url;
   };
@@ -148,26 +148,26 @@ const ProductAdd = () => {
         <Form.Item label="Chi tiết" name="detail">
           <TextArea rows={4} />
         </Form.Item>
-        <Form.Item label="Kích cỡ" required name="sizeIds">
+        {/* <Form.Item label="Kích cỡ" required name="sizeIds">
           <Checkbox.Group style={{ width: "100%" }} onChange={onChange}>
             <Row>
               {sizes?.map((item: ISize) => {
                 return (
-                  <Col span={8} key={item.id}>
-                    <Checkbox value={item.id}>{item.size}</Checkbox>
+                  <Col span={8} key={item._id}>
+                    <Checkbox value={item._id}>{item.size}</Checkbox>
                   </Col>
                 );
               })}
             </Row>
           </Checkbox.Group>
-        </Form.Item>
+        </Form.Item> */}
         <Form.Item label="Danh mục" required name="categoryId">
           <Select>
             {categories?.map((category: ICategory) => {
               return (
                 <Select.Option
-                  key={category.id}
-                  value={category.id}
+                  key={category._id}
+                  value={category._id}
                   label={category.name}
                 >
                   {category.name}

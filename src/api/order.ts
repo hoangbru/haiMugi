@@ -10,16 +10,16 @@ const orderApi = createApi({
     }),
     endpoints: (builder) => ({
         getOrders: builder.query<IOrder[], void>({
-            query: () => 'orders',
+            query: () => 'order',
             providesTags: ['Order']
         }),
         getOrderById: builder.query<IOrder, string | number>({
-            query: (id) => `orders/${id}`,
+            query: (id) => `order/${id}`,
             providesTags: ['Order']
         }),
         addOrder: builder.mutation({
             query: (value) => ({
-                url: 'orders',
+                url: 'order',
                 method: 'POST',
                 body: value
             }),
@@ -27,7 +27,7 @@ const orderApi = createApi({
         }),
         updateOrder: builder.mutation({
             query: (value) => ({
-                url: `orders/${value.id}`,
+                url: `order/${value.id}`,
                 method: 'PATCH',
                 body: value
             }),

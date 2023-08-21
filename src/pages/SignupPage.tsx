@@ -1,23 +1,36 @@
+/* eslint-disable no-empty */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { useSignupMutation } from "../api/auth";
 import { toast } from "react-hot-toast";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
+
 export default function SignupPage() {
-  const [signup] = useSignupMutation();
+  const [signup, result] = useSignupMutation();
+
   const navigate = useNavigate();
   const {
     register,
     handleSubmit,
     formState: { errors },
+    watch,
   } = useForm();
-  const onHandleSubmit = (values: any) => {
-    signup({...values, role: "customer"})
-      .unwrap()
-      .then(() => {
-        toast.success("Tạo tài khoản thành công");
-        navigate("/signin");
+  const password = watch("password");
+  const onSubmitHandle = async (value: any) => {
+    try {
+      await signup({
+        ...value,
+        role: "customer",
       });
+      // if (result.isError === true) {
+      //   toast.error(data?.error?.data?.message);
+      // }
+      toast.success("Đăng ký thành công !")
+    } catch {
+    } finally {
+      navigate("/signin");
+    }
   };
   return (
     <>
@@ -34,7 +47,7 @@ export default function SignupPage() {
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form className="space-y-6" onSubmit={handleSubmit(onHandleSubmit)}>
+          <form className="space-y-6" onSubmit={handleSubmit(onSubmitHandle)}>
             <div>
               <label
                 htmlFor="text"
@@ -111,11 +124,47 @@ export default function SignupPage() {
             </div>
 
             <div>
+              <div className="flex items-center justify-between">
+                <label
+                  htmlFor="re_password"
+                  className="block text-sm font-medium leading-6 text-gray-900"
+                >
+                  Confirm Password
+                </label>
+              </div>
+              <div className="mt-2">
+                <input
+                  id="confirmPassword"
+                  {...register("confirmPassword", {
+                    required: "Không được bỏ trống",
+                    validate: (value) =>
+                      value === password || "Nhập lại mật khẩu không khớp",
+                  })}
+                  type="password"
+                  autoComplete="confirmPassword"
+                  className="block w-full px-2 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                />
+                {errors.confirmPassword && (
+                  <span className="text-red-500">
+                    {errors.confirmPassword?.message as React.ReactNode}
+                  </span>
+                )}
+              </div>
+            </div>
+
+            <div>
               <button
                 type="submit"
                 className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
-                Đăng ký
+                {result.isLoading ? (
+                  <AiOutlineLoading3Quarters
+                    className="animate-spin"
+                    size={20}
+                  />
+                ) : (
+                  "Đăng ký"
+                )}
               </button>
             </div>
           </form>

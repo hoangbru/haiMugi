@@ -22,12 +22,12 @@ const CategoryList = () => {
 
   const confirm = (id: number | string) => {
     removeCategory(id);
-    toast.success("Removed successfully");
+    toast.success("Xoá thành công !");
   };
 
   const columns: ColumnsType<DataType> = [
     {
-      title: "ID",
+      title: "STT",
       dataIndex: "key",
       key: "key",
       align: "center",
@@ -48,7 +48,7 @@ const CategoryList = () => {
         return (
           <Space size="middle">
             <Link
-              to={`/admin/categories/${record.id}/edit`}
+              to={`/admin/categories/${record._id}/edit`}
               style={{ color: "rgba(13, 29, 49, 0.9)", fontSize: "18px" }}
             >
               <Tooltip placement="top" title={text}>
@@ -57,10 +57,10 @@ const CategoryList = () => {
             </Link>
             <Popconfirm
               placement="topRight"
-              title="Are you sure to remove?"
-              onConfirm={() => confirm(record.id)}
-              okText="Yes"
-              cancelText="No"
+              title="Bạn có muốn xoá danh mục này?"
+              onConfirm={() => confirm(record._id)}
+              okText="Có"
+              cancelText="Không"
             >
               <Button type="primary" danger>
                 Xoá
@@ -71,9 +71,9 @@ const CategoryList = () => {
       },
     },
   ];
-  const data = categories?.map((category: any) => {
+  const data = categories?.map((category: any, index:any) => {
     return {
-      key: category.id,
+      key: index + 1,
       ...category,
     };
   });

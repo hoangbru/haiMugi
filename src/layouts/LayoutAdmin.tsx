@@ -39,12 +39,13 @@ const items: MenuItem[] = [
   getItem("Products", "sub1", <FileOutlined />, "/admin/products", [
     getItem("List", "2", undefined, "/admin/products"),
     getItem("Add new", "3", undefined, "/admin/products/add"),
+    getItem("Trash", "4", undefined, "/admin/products/trash"),
   ]),
   getItem("Categories", "sub2", <FileOutlined />, "/admin/categories", [
-    getItem("List", "4", undefined, "/admin/categories"),
-    getItem("Add new", "5", undefined, "/admin/categories/add"),
+    getItem("List", "5", undefined, "/admin/categories"),
+    getItem("Add new", "6", undefined, "/admin/categories/add"),
   ]),
-  getItem("User", "6", <UserOutlined />),
+  getItem("User", "7", <UserOutlined />),
 ];
 const LayoutAdmin: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);

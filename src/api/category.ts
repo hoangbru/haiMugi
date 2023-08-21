@@ -13,7 +13,7 @@ const categoryApi = createApi({
             providesTags: ['Category']
         }),
         getCategoryById: builder.query<ICategory, string | number>({
-            query: (id) => `categories/${id}`,
+            query: (id) => `category/${id}`,
             providesTags: ['Category']
         }),
         addCategory: builder.mutation({
@@ -26,14 +26,14 @@ const categoryApi = createApi({
         }),
         removeCategory: builder.mutation<ICategory, string | number>({
             query: (id) => ({
-                url: `categories/${id}`,
+                url: `category/${id}`,
                 method: 'DELETE',
             }),
             invalidatesTags: ['Category']
         }),
         updateCategory: builder.mutation({
             query: (category) => ({
-                url: `categories/${category.id}`,
+                url: `category/${category.id}`,
                 method: 'PATCH',
                 body: category
             }),

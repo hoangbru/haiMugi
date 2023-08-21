@@ -1,16 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/rules-of-hooks */
-import { EditOutlined } from "@ant-design/icons";
-import { AiOutlinePlusCircle } from "react-icons/ai";
+import { RedoOutlined } from "@ant-design/icons";
 import type { ColumnsType } from "antd/es/table";
-import { Link } from "react-router-dom";
 import { Space, Table, Button, Tooltip, Popconfirm, Skeleton } from "antd";
 import {
-  useGetAllProductsQuery,
-  useRemoveProductMutation,
+  useForceDeleteProductMutation,
+  useGetTrashProductsQuery,
+  useRestoreProductMutation,
 } from "../../../api/product";
 import { toast } from "react-hot-toast";
-// import { useGetCategoryByIdQuery } from "../../../api/category";
 
 interface DataType {
   key: string | number;
@@ -23,15 +21,17 @@ interface DataType {
   sizeIds: [];
 }
 
-const ProductList = () => {
+const ProductTrash = () => {
   const { data: products, isLoading: isLoadingFetching } =
-    useGetAllProductsQuery();
-  const [removeProduct] = useRemoveProductMutation();
-  const text = <span>Edit</span>;
+    useGetTrashProductsQuery();
+  const [removeProduct] = useForceDeleteProductMutation();
+  const [restoreProduct, { isLoading: isLoadingRestore }] =
+    useRestoreProductMutation();
+  const text = <span>Khôi phục</span>;
 
   const confirm = (id: number | string) => {
     removeProduct(id);
-    toast.success("Removed successfully");
+    toast.success("Xoá sản phẩm thành công");
   };
 
   const columns: ColumnsType<DataType> = [
@@ -64,11 +64,11 @@ const ProductList = () => {
       dataIndex: "detail",
       key: "detail",
     },
-    // {
-    //   title: "Danh mục",
-    //   dataIndex: "categoryId",
-    //   key: "categoryId",
-    // },
+    {
+      title: "Danh mục",
+      dataIndex: "categoryId",
+      key: "categoryId",
+    },
     // {
     //   title: "Kích cỡ",
     //   dataIndex: "sizeIds",
@@ -86,17 +86,22 @@ const ProductList = () => {
       render: (record) => {
         return (
           <Space size="middle">
-            <Link
-              to={`/admin/products/${record._id}/edit`}
-              style={{ color: "rgba(13, 29, 49, 0.9)", fontSize: "18px" }}
+            <Button
+              type="text"
+              className="flex justify-center items-center text-xl"
+              onClick={() => restoreProduct(record._id)}
             >
               <Tooltip placement="top" title={text}>
-                <EditOutlined />
+                {isLoadingRestore ? (
+                  <RedoOutlined className="flex justify-center items-center animate-spin text-xl" />
+                ) : (
+                  <RedoOutlined />
+                )}
               </Tooltip>
-            </Link>
+            </Button>
             <Popconfirm
               placement="topRight"
-              title="Chuyển sản phẩm vào thùng rác?"
+              title="Xoá vĩnh viễn sản phẩm?"
               onConfirm={() => confirm(record._id)}
               okText="Có"
               cancelText="Không"
@@ -119,8 +124,8 @@ const ProductList = () => {
   return (
     <div>
       <div className="flex justify-between items-center mb-4">
-        <h1 className="text-xl font-semibold">Quản lý sản phẩm</h1>
-        <button className=" text-white bg-sky-700 border-1 rounded-md px-3 py-2 hover:opacity-75">
+        <h1 className="text-xl font-semibold">Thùng rác</h1>
+        {/* <button className=" text-white bg-sky-700 border-1 rounded-md px-3 py-2 hover:opacity-75">
           <Link
             to="/admin/products/add"
             className="hover:text-white flex justify-between items-center gap-2"
@@ -128,7 +133,7 @@ const ProductList = () => {
             <AiOutlinePlusCircle />
             Thêm mới
           </Link>
-        </button>
+        </button> */}
       </div>
       {isLoadingFetching ? (
         <Skeleton />
@@ -144,4 +149,4 @@ const ProductList = () => {
   );
 };
 
-export default ProductList;
+export default ProductTrash;

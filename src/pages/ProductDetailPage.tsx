@@ -1,6 +1,6 @@
 import { HiStar } from "react-icons/hi";
 import { useParams } from "react-router-dom";
-import { useGetProductByIdQuery } from "../api/product";
+import { useGetProductBySlugQuery } from "../api/product";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { useState } from "react";
@@ -34,10 +34,11 @@ const ProductDetailPage = () => {
   const [selectedColor, setSelectedColor] = useState(colors[0]);
   const { data: sizes } = useGetSizesQuery();
   const [selectedSize, setSelectedSize] = useState();
-  const { id } = useParams<{ id: string }>();
-  const { data: product, isLoading: isLoadingProduct } = useGetProductByIdQuery(
-    id || ""
+  const { id: slug } = useParams<{ id: string }>();
+  const { data: product, isLoading: isLoadingProduct } = useGetProductBySlugQuery(
+    slug || ""
   );
+  // console.log('product:', product)
   return (
     <div className="bg-white">
       <div className="pt-6">

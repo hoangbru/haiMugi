@@ -1,24 +1,28 @@
+/* eslint-disable no-empty */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { useSigninMutation } from "../api/auth";
 import { toast } from "react-hot-toast";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 export default function SigninPage() {
-  const [signin] = useSigninMutation();
+  const [signin, result] = useSigninMutation();
   const navigate = useNavigate();
   const {
     register,
     handleSubmit,
-    formState: { errors }
+    formState: { errors },
   } = useForm();
-  const onHandleSubmit = (values: any) => {
-    signin(values)
-      .unwrap()
-      .then(() => {
-        toast.success("Đăng nhập thành công");
-        navigate("/");
-      });
+  const onSubmitHandle = async (values: any) => {
+    try {
+      const {data} = await signin(values);
+      toast.success("Đăng nhập thành công");
+      localStorage.setItem('user', JSON.stringify(data))
+    } catch {
+    } finally {
+      navigate("/");
+    }
   };
   return (
     <>
@@ -35,7 +39,7 @@ export default function SigninPage() {
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form className="space-y-6" onSubmit={handleSubmit(onHandleSubmit)}>
+          <form className="space-y-6" onSubmit={handleSubmit(onSubmitHandle)}>
             <div>
               <label
                 htmlFor="email"
@@ -49,16 +53,19 @@ export default function SigninPage() {
                   type="text"
                   autoComplete="email"
                   {...register("email", {
-                    required: 'Không được bỏ trống',
+                    required: "Không được bỏ trống",
                     pattern: {
                       value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-                      message: 'Email sai định dạng',
-                    }}
-                  )}
+                      message: "Email sai định dạng",
+                    },
+                  })}
                   className="block w-full rounded-md border-0 px-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
-                {errors.email && <span className="text-red-500">{errors.email.message as React.ReactNode}</span>}
-                
+                {errors.email && (
+                  <span className="text-red-500">
+                    {errors.email.message as React.ReactNode}
+                  </span>
+                )}
               </div>
             </div>
 
@@ -84,11 +91,14 @@ export default function SigninPage() {
                   id="password"
                   type="password"
                   autoComplete="password"
-                  {...register("password", { required: 'Không được bỏ trống' })}
+                  {...register("password", { required: "Không được bỏ trống" })}
                   className="block w-full rounded-md border-0 px-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
-                {errors.password && <span className="text-red-500">{errors.password.message as React.ReactNode}</span>}
-                
+                {errors.password && (
+                  <span className="text-red-500">
+                    {errors.password.message as React.ReactNode}
+                  </span>
+                )}
               </div>
             </div>
 
@@ -97,7 +107,14 @@ export default function SigninPage() {
                 type="submit"
                 className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
-                Đăng nhập
+                {result.isLoading ? (
+                  <AiOutlineLoading3Quarters
+                    className="animate-spin"
+                    size={20}
+                  />
+                ) : (
+                  "Đăng nhập"
+                )}
               </button>
             </div>
           </form>

@@ -18,14 +18,14 @@ import {
   HiOutlineEye,
   HiOutlineShoppingCart,
   HiArrowSmLeft,
-  HiArrowSmRight
+  HiArrowSmRight,
 } from "react-icons/hi";
-import { useGetProductByIdQuery, useGetProductsQuery } from "../api/product";
+import { useGetProductsQuery } from "../api/product";
 import * as CurrencyFormat from "react-currency-format";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { Link } from "react-router-dom";
-import { useGetSizesQuery } from "../api/sizes";
+// import { useGetSizesQuery } from "../api/sizes";
 import { useGetCategoriesQuery } from "../api/category";
 import { useAppDispatch } from "../store/hook";
 import { toast } from "react-hot-toast";
@@ -61,17 +61,17 @@ export default function ProductsPage() {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const { data: products, isLoading: isLoadingProducts } =
     useGetProductsQuery();
-  const { data: sizes } = useGetSizesQuery();
+  // const { data: sizes } = useGetSizesQuery();
   const { data: categories } = useGetCategoriesQuery();
   const [open, setOpen] = useState(false);
   const [selectedColor, setSelectedColor] = useState(colors[0]);
-  const [selectedSize, setSelectedSize] = useState([]);
+  // const [selectedSize, setSelectedSize] = useState([]);
 
   const productQuickView = (id: any) => {
     setOpen(true);
-    const { data } = useGetProductByIdQuery(id);
-    console.log("data", data);
-    return data;
+    // const { data } = useGetProductByIdQuery(id);
+    // console.log("data", data);
+    // return data;
   };
 
   // Filters
@@ -93,23 +93,23 @@ export default function ProductsPage() {
       name: "Danh mục",
       options: categories?.map((item: any) => {
         return {
-          value: item.id,
+          value: item._id,
           label: item.name,
           checked: false,
         };
       }),
     },
-    {
-      id: "size",
-      name: "Kích cỡ",
-      options: sizes?.map((item: any) => {
-        return {
-          value: item.id,
-          label: item.size,
-          checked: false,
-        };
-      }),
-    },
+    // {
+    //   id: "size",
+    //   name: "Kích cỡ",
+    //   options: sizes?.map((item: any) => {
+    //     return {
+    //       value: item._id,
+    //       label: item.size,
+    //       checked: false,
+    //     };
+    //   }),
+    // },
   ];
 
   return (
@@ -391,82 +391,81 @@ export default function ProductsPage() {
               {/* Product grid */}
               <div className="lg:col-span-3">
                 {/* Pagination */}
-                <div className="flex items-center justify-between bg-white px-4 py-3 sm:px-6">
-                  <div className="flex flex-1 justify-between sm:hidden">
-                    <a
-                      href="#"
-                      className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-                    >
-                      Trước
-                    </a>
-                    <a
-                      href="#"
-                      className="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-                    >
-                      Sau
-                    </a>
-                  </div>
-                  <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
-                    <div>
-                      <p className="text-sm text-gray-700">
-                        Hiển thị <span className="font-medium">1</span> từ{" "}
-                        <span className="font-medium">10</span> trong{" "}
-                        <span className="font-medium">97</span> kết quả
-                      </p>
-                    </div>
-                    <div>
-                      <nav
-                        className="isolate inline-flex -space-x-px rounded-md shadow-sm"
-                        aria-label="Pagination"
+                {isLoadingProducts ? (
+                  <Skeleton />
+                ) : (
+                  <div className="flex items-center justify-between bg-white px-4 py-3 sm:px-6">
+                    <div className="flex flex-1 justify-between sm:hidden">
+                      <a
+                        href="#"
+                        className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
                       >
-                        <Link
-                          to="/"
-                          className="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
+                        Trước
+                      </a>
+                      <a
+                        href="#"
+                        className="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                      >
+                        Sau
+                      </a>
+                    </div>
+                    <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+                      <div>
+                        <p className="text-sm text-gray-700">
+                          Hiển thị từ <span className="font-medium">1</span> đến{" "}
+                          <span className="font-medium">
+                            {products.pagination.limit}
+                          </span>{" "}
+                          trong{" "}
+                          <span className="font-medium">
+                            {products.pagination.totalDocs}
+                          </span>{" "}
+                          kết quả
+                        </p>
+                      </div>
+                      <div>
+                        <nav
+                          className="isolate inline-flex -space-x-px rounded-md shadow-sm"
+                          aria-label="Pagination"
                         >
-                          <span className="sr-only">Trước</span>
-                          <HiArrowSmLeft
-                            className="h-5 w-5"
-                            aria-hidden="true"
-                          />
-                        </Link>
-                        {/* Current: "z-10 bg-indigo-600 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600", Default: "text-gray-900 hover:bg-gray-50 focus:outline-offset-0" */}
-                        <Link
-                          to="/"
-                          aria-current="page"
-                          className="relative z-10 inline-flex items-center border-t-2 border-indigo-600 px-4 py-2 text-sm font-semibold text-indigo-600 focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                        >
-                          1
-                        </Link>
-                        <Link
-                          to="/"
-                          className="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
-                        >
-                          2
-                        </Link>
-                        <Link
-                          to="/"
-                          className="relative hidden items-center px-4 py-2 text-sm font-semibold text-gray-900 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 md:inline-flex"
-                        >
-                          3
-                        </Link>
-                        <span className="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-700 focus:outline-offset-0">
-                          ...
-                        </span>
-                        
-                        <Link
-                          to="/"
-                          className="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
-                        >
-                          <span className="sr-only">Sau</span>
-                          <HiArrowSmRight
-                            className="h-5 w-5"
-                            aria-hidden="true"
-                          />
-                        </Link>
-                      </nav>
+                          <Link
+                            to="/"
+                            className="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
+                          >
+                            <span className="sr-only">Trước</span>
+                            <HiArrowSmLeft
+                              className="h-5 w-5"
+                              aria-hidden="true"
+                            />
+                          </Link>
+                          {/* Current: "z-10 bg-indigo-600 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600", Default: "text-gray-900 hover:bg-gray-50 focus:outline-offset-0" */}
+                          <Link
+                            to="/"
+                            aria-current="page"
+                            className="relative z-10 inline-flex items-center border-t-2 border-indigo-600 px-4 py-2 text-sm font-semibold text-indigo-600 focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                          >
+                            {products.pagination.currentPage}
+                          </Link>
+
+                          <span className="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-700 focus:outline-offset-0">
+                            ...
+                          </span>
+
+                          <Link
+                            to="/"
+                            className="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
+                          >
+                            <span className="sr-only">Sau</span>
+                            <HiArrowSmRight
+                              className="h-5 w-5"
+                              aria-hidden="true"
+                            />
+                          </Link>
+                        </nav>
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
 
                 {/* Loading */}
                 {isLoadingProducts ? (
@@ -486,8 +485,8 @@ export default function ProductsPage() {
                   </div>
                 ) : (
                   <div className="mt-6 grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-3 xl:gap-x-8">
-                    {products?.map((product) => (
-                      <div key={product.id}>
+                    {products.data?.map((product: any) => (
+                      <div key={product._id}>
                         <div className="group relative">
                           <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-80">
                             <img
@@ -498,7 +497,7 @@ export default function ProductsPage() {
                           </div>
                           <button
                             className="absolute bottom-14 left-4 drop-shadow-md flex justify-center items-center"
-                            onClick={() => productQuickView(product?.id)}
+                            onClick={() => productQuickView(product?._id)}
                           >
                             <HiOutlineEye
                               size={32}
@@ -523,7 +522,7 @@ export default function ProductsPage() {
                           <div className="mt-4 flex justify-between">
                             <div>
                               <h3 className="text-sm text-gray-700">
-                                <Link to={`/products/${product.id}`}>
+                                <Link to={`/products/${product.slug}`}>
                                   <span
                                     aria-hidden="true"
                                     className="absolute inset-0"
@@ -685,7 +684,7 @@ export default function ProductsPage() {
                                               </div>
 
                                               {/* Sizes */}
-                                              <div className="mt-10">
+                                              {/* <div className="mt-10">
                                                 <div className="flex items-center justify-between">
                                                   <h4 className="text-sm font-medium text-gray-900">
                                                     Size
@@ -774,14 +773,14 @@ export default function ProductsPage() {
                                                     ))}
                                                   </div>
                                                 </RadioGroup>
-                                              </div>
-                                              <button
-                                                type="button"
-                                                onClick={() => {}}
+                                              </div> */}
+
+                                              <Link
+                                                to={`/products/${product._id}`}
                                                 className="mt-6 flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-8 py-3 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                                               >
-                                                Thêm vào giỏ hàng
-                                              </button>
+                                                Xem chi tiết
+                                              </Link>
                                             </form>
                                           </section>
                                         </div>
